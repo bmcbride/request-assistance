@@ -8,8 +8,11 @@ app.map = new google.maps.Map($("#map")[0], {
   fullscreenControl: false,
   streetViewControl: false,
   gestureHandling: "greedy",
-  zoom: 4,
-  center: {lat: -25.363, lng: 131.044}
+  zoom: 0,
+  center: {
+    lat: 0,
+    lng: 0
+  }
 });
 
 app.locationMarker =new google.maps.Marker({
