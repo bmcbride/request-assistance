@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#222">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#222">
+    <meta name="description" content="">
+    <meta name="author" content="Bryan R. McBride">
+    <title>Assistance</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="assets/img/android-chrome-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="assets/img/favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="assets/img/favicon-32x32.png" sizes="32x32">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-beta.30/css/uikit.min.css"/>
+    <link rel="stylesheet" href="assets/css/app.css"/>
+  </head>
+
+  <body>
+    <nav class="uk-navbar-container uk-light" uk-navbar>
+      <div class="uk-navbar-left">
+        <a class="uk-navbar-toggle" style="color: white;" href="#offcanvas" uk-toggle uk-navbar-toggle-icon ></a>
+        <span class="uk-navbar-item uk-logo" style="color: white;">Request Assistance</span>
+      </div>
+    </nav>
+
+    <div id="offcanvas" uk-offcanvas>
+      <div class="uk-offcanvas-bar">
+        <button class="uk-offcanvas-close" type="button" uk-close></button>
+        If you require immediate emergency assistance, please dial 911.
+      </div>
+    </div>
+
+    <div class="map-container uk-box-shadow-small">
+      <div class="crosshair" id="crosshair"></div>
+      <div id="map"></div>
+    </div>
+
+    <div id="welcome-modal" class="uk-flex-top" uk-modal>
+      <div class="uk-modal-dialog uk-margin-auto-vertical">
+        <div class="uk-modal-body">
+          This is currently just a proof of concept. Do NOT use this for actual assistance!
+        </div>
+        <div class="uk-modal-footer uk-text-right">
+          <button class="uk-button uk-button-primary uk-modal-close" type="button">OK</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="loading-modal" class="uk-flex-top" uk-modal>
+      <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+        <div uk-grid>
+          <div class="uk-width-3-4" style="padding-top: 8px;">
+            Submitting your request...
+          </div>
+          <div class="uk-width-1-4">
+            <div class="spinner">
+              <div class="double-bounce1"></div>
+              <div class="double-bounce2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="success-modal" class="uk-flex-top" uk-modal>
+      <div class="uk-modal-dialog uk-margin-auto-vertical">
+        <div class="uk-modal-body">
+          Your information has been successfully sent! A volunteer should contact you as soon as possible regarding assistance.
+        </div>
+        <div class="uk-modal-footer uk-text-right">
+          <button class="uk-button uk-button-primary uk-modal-close" type="button">OK</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="uk-padding-small uk-section-muted">
+      <form class="uk-grid-small uk-form-stacked" id="form" uk-grid>
+        <div class="uk-width-1-1">
+          <h3 class="uk-heading-line"><span>Location Info</span></h3>
+        </div>
+        <div class="uk-width-1-2">
+          <div class="uk-margin">
+            <label class="uk-form-label" for="latitude">Latitude</label>
+            <div class="uk-form-controls">
+              <input class="uk-input" name="latitude" type="text">
+            </div>
+          </div>
+        </div>
+        <div class="uk-width-1-2">
+          <div class="uk-margin">
+            <label class="uk-form-label" for="longitude">Longitude</label>
+            <div class="uk-form-controls">
+              <input class="uk-input" name="longitude" type="text">
+            </div>
+          </div>
+        </div>
+        <div class="uk-width-1-6">
+          <div class="uk-margin">
+            <label class="uk-form-label" for="apartment">Apt #</label>
+            <div class="uk-form-controls">
+              <input class="uk-input" name="apartment" type="text">
+            </div>
+          </div>
+        </div>
+        <div class="uk-width-5-6">
+          <div class="uk-margin">
+            <label class="uk-form-label" for="address">Street Address <span class="uk-text-danger">*</span></label>
+            <div class="uk-form-controls">
+              <div class="uk-inline uk-width-1-1">
+                <a class="uk-form-icon" href="" id="location-btn" uk-icon="icon: location"></a>
+                <input class="uk-input" name="address" type="text" placeholder="<- tap marker to autofill" required>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="uk-width-2-5">
+          <div class="uk-margin">
+            <label class="uk-form-label" for="city">City <span class="uk-text-danger">*</span></label>
+            <div class="uk-form-controls">
+              <input class="uk-input" name="city" type="text" required>
+            </div>
+          </div>
+        </div>
+        <div class="uk-width-1-5">
+          <div class="uk-margin">
+            <label class="uk-form-label" for="state">State</label>
+            <div class="uk-form-controls">
+              <input class="uk-input" name="state" type="text">
+            </div>
+          </div>
+        </div>
+        <div class="uk-width-2-5">
+          <div class="uk-margin">
+            <label class="uk-form-label" for="zip">Zip Code</label>
+            <div class="uk-form-controls">
+              <input class="uk-input" name="zip" type="text" pattern="(\d{5}([\-]\d{4})?)">
+            </div>
+          </div>
+        </div>
+        <div class="uk-width-1-1">
+          <div class="uk-margin">
+            <label class="uk-form-label" for="county">County</label>
+            <div class="uk-form-controls">
+              <input class="uk-input" name="county" type="text">
+            </div>
+          </div>
+        </div>
+        <div class="uk-width-1-1">
+          <div class="uk-margin">
+            <label class="uk-form-label" for="location_comments">Location Comments</label>
+            <div class="uk-form-controls">
+              <textarea class="uk-textarea" rows="4" name="location_comments" placeholder="on roof, street flooded, etc."></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="uk-width-1-1">
+          <h3 class="uk-heading-line"><span>Contact Info</span></h3>
+        </div>
+        <div class="uk-width-1-1">
+          <div class="uk-margin">
+            <label class="uk-form-label" for="name">Name(s) <span class="uk-text-danger">*</span></label>
+            <div class="uk-form-controls">
+              <input class="uk-input" name="name" type="text" required>
+            </div>
+          </div>
+        </div>
+        <div class="uk-width-3-5">
+          <div class="uk-margin">
+            <label class="uk-form-label" for="email">Email</label>
+            <div class="uk-form-controls">
+              <input class="uk-input" name="email" type="email">
+            </div>
+          </div>
+        </div>
+        <div class="uk-width-2-5">
+          <div class="uk-margin">
+            <label class="uk-form-label" for="longitude">Phone <span class="uk-text-danger">*</span></label>
+            <div class="uk-form-controls">
+              <input class="uk-input" name="phone" type="text" required>
+            </div>
+          </div>
+        </div>
+        <div class="uk-width-2-5">
+          <div class="uk-margin">
+            <label class="uk-form-label" for="twitter">Twitter Handle</label>
+            <div class="uk-form-controls">
+              <input class="uk-input" name="twitter" type="text" placeholder="@">
+            </div>
+          </div>
+        </div>
+        <div class="uk-width-3-5">
+          <div class="uk-margin">
+            <label class="uk-form-label" for="facebook">Facebook Post</label>
+            <div class="uk-form-controls">
+              <input class="uk-input" name="facebook" type="text">
+            </div>
+          </div>
+        </div>
+        <div class="uk-width-1-1">
+          <h3 class="uk-heading-line"><span>Assistance Required</span></h3>
+        </div>
+        <div class="uk-width-1-5">
+          <div class="uk-margin">
+            <label class="uk-form-label" for="people"># People</label>
+            <div class="uk-form-controls">
+              <input class="uk-input" name="people" type="number">
+            </div>
+          </div>
+        </div>
+        <div class="uk-width-1-5">
+          <div class="uk-margin">
+            <label class="uk-form-label" for="pets"># Pets</label>
+            <div class="uk-form-controls">
+              <input class="uk-input" name="pets" type="number">
+            </div>
+          </div>
+        </div>
+        <div class="uk-width-3-5">
+          <div class="uk-margin">
+            <label class="uk-form-label" for="pet_types">Type of Pets</label>
+            <div class="uk-form-controls">
+              <select class="uk-select" name="pet_types" multiple>
+                <option>Cats</option>
+                <option>Dogs</option>
+                <option>Rodents</option>
+                <option>Reptiles</option>
+                <option>Birds</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="uk-width-1-1">
+          <div class="uk-margin">
+            <label class="uk-form-label" for="special_considerations">Special Considerations</label>
+            <div class="uk-form-controls">
+              <textarea class="uk-textarea" rows="4" name="special_considerations" placeholder="medical needs, mobility, age, etc."></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="uk-width-1-1">
+          <div class="uk-margin">
+            <label class="uk-form-label" for="other_comments">Other Comments</label>
+            <div class="uk-form-controls">
+              <textarea class="uk-textarea" rows="4" name="other_comments" placeholder="additional information to help responders"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="uk-width-1-1">
+          <div class="uk-margin">
+            <label class="uk-form-label" for="photo">Photo</label>
+            <div class="uk-form-controls">
+              <input type="file" id="file" accept="image/*">
+              <input type="hidden" name="photo">
+            </div>
+          </div>
+          <img id="photo-preview" width="100%" style="padding-top: 5px; display: none;">
+        </div>
+        <div class="uk-width-1-1">
+          <div class="uk-text-meta">
+            By submitting this form you acknowledge that you are providing information to a volunteer group. Your information will be searchable by the public. This is a crowd-sourced effort to help get your information to people that can provide assistance.
+          </div>
+        </div>
+        <div class="uk-width-1-1">
+          <div class="uk-padding-small">
+            <button class="uk-button uk-button-primary uk-width-1-1" type="submit">Submit Request</button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-beta.30/js/uikit.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-beta.30/js/uikit-icons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-load-image/2.10.0/load-image.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyCZFBnhpFAvqY4TMeV-4jXpHrbaEUv4zT0"></script>
+    <script src="assets/js/app.js"></script>
+  </body>
+</html>
