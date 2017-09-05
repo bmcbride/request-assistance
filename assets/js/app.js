@@ -62,7 +62,7 @@ google.maps.event.addDomListener(app.geolocationBtn, "click", function() {
 });
 
 function reverseGeocode(latlng) {
-  var geocoder = new google.maps.Geocoder;
+  var geocoder = new google.maps.Geocoder();
   geocoder.geocode({"location": latlng}, function(results, status) {
     if (status === "OK") {
       if (results[0]) {
@@ -123,8 +123,6 @@ function locationUpdate(position){
   app.locationCircle.setVisible(true);
   app.locationCircle.setCenter(latLng);
   app.locationCircle.setRadius(position.coords.accuracy);
-  $("input[name=latitude]").val(position.coords.latitude.toFixed(6));
-  $("input[name=longitude]").val(position.coords.longitude.toFixed(6));
 }
 
 function serializeForm() {
@@ -189,6 +187,8 @@ $(document).ready(function() {
       locationUpdate(position);
       app.map.fitBounds(app.locationCircle.getBounds());
       reverseGeocode(app.map.getCenter());
+      $("input[name=latitude]").val(position.coords.latitude.toFixed(6));
+      $("input[name=longitude]").val(position.coords.longitude.toFixed(6));
       navigator.geolocation.watchPosition(locationUpdate, geolocationError, {enableHighAccuracy: true});
     }, geolocationError, {enableHighAccuracy: true});
   } else {
