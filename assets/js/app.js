@@ -126,15 +126,20 @@ function locationUpdate(position){
 }
 
 function serializeForm() {
-  var ser = $("#form [name]").not("select").serialize();
-  $("select", $("#form")).each(function(i, select) {
-    var s = "";
-    $("option:selected", select).each(function() {
-        s += (s.length>0?", ":"") + $(this).val();
-    });
-    ser += (ser.length>0?"&":"") + $(select).attr("name") + "=" + s;
+  var o = {};
+  var a = $("#form").serializeArray();
+  $.each(a, function () {
+    if (o[this.name]) {
+      if (!o[this.name].push) {
+        o[this.name] = [o[this.name]];
+      }
+      o[this.name].push(this.value || "");
+      o[this.name] = o[this.name].join();
+    } else {
+      o[this.name] = this.value || "";
+    }
   });
-  return ser;
+  return $.param(o);
 }
 
 $("#form").submit(function(e) {
