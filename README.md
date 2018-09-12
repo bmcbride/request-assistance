@@ -19,3 +19,6 @@ https://bmcbride.github.io/request-assistance/
 * Copy the code from `Code.gs` into a new [Google Apps Script](https://developers.google.com/apps-script/) file in your Google Drive account.
 * Modify the Apps Script code, specifying your Sheet ID from the previous step on line 1 and the ID of a Drive folder to store photos on line 2. Save and deploy as a Web App (Publish -> Deploy as web app...). Execute the app as you and set the "Who has access to the app" setting to Anyone, even anonymous.
 * After publishing (and authorizing), copy the web app URL and paste it into the `app.config.url` value on line 3 of the `assets/js/app.js` file.
+
+### Screenshots
+![Mobile](https://bmcbride.github.io/request-assistance/screenshots.png)
