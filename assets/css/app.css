@@ -4,7 +4,7 @@ html, body {
 }
 
 .uk-navbar-container {
-  /*height: 60px;*/
+  height: 60px;
 }
 
 .uk-navbar-container:not(.uk-navbar-transparent) {
