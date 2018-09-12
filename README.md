@@ -21,4 +21,4 @@ https://bmcbride.github.io/request-assistance/
 * After publishing (and authorizing), copy the web app URL and paste it into the `app.config.url` value on line 3 of the `assets/js/app.js` file.
 
 ### Screenshots
-![Mobile](https://bmcbride.github.io/request-assistance/screenshots.png)
+![Mobile](https://raw.githubusercontent.com/bmcbride/request-assistance/gh-pages/screenshots.png)
