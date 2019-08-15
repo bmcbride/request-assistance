@@ -2,29 +2,14 @@ html, body {
   height: 100%;
   width: 100%;
 }
-
-.uk-navbar-container {
-  height: 60px;
-}
-
-.uk-navbar-container:not(.uk-navbar-transparent) {
-  background: #222;
-}
-
-.uk-notification {
-  z-index: 99999;
-}
-
-.uk-select[multiple] {
-  height: 40px;
-}
-
-.map-container {
-  width: 100%;
+#map-container {
   height: 200px;
+  padding: 0;
   position: relative;
 }
-
+#map {
+  height: 100%;
+}
 .crosshair {
   position: absolute;
   width: 36px;
@@ -37,50 +22,46 @@ html, body {
   z-index: 99;
   opacity: 1;
 }
-
-#map {
-  width: 100%;
-  height: 100%;
-  padding: 0px;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  position: relative;
-  /*margin: 100px auto;*/
-}
-
-.double-bounce1, .double-bounce2 {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background-color: #333;
-  opacity: 0.6;
+#loading {
   position: absolute;
-  top: 0;
-  left: 0;
-
-  -webkit-animation: sk-bounce 2.0s infinite ease-in-out;
-  animation: sk-bounce 2.0s infinite ease-in-out;
+  width: 220px;
+  height: 19px;
+  top: 25%;
+  left: 50%;
+  margin: -10px 0 0 -110px;
+  z-index: 20001;
 }
-
-.double-bounce2 {
-  -webkit-animation-delay: -1.0s;
-  animation-delay: -1.0s;
+#form-container {
+  /* height: 70%; */
+  /* width: 100%;
+  padding: 5px;
+  position: relative; */
+  box-shadow: inset 0 8px 8px -8px #696868;
 }
-
-@-webkit-keyframes sk-bounce {
-  0%, 100% { -webkit-transform: scale(0.0) }
-  50% { -webkit-transform: scale(1.0) }
+.pac-container {
+  z-index: 1050;
 }
-
-@keyframes sk-bounce {
-  0%, 100% {
-    transform: scale(0.0);
-    -webkit-transform: scale(0.0);
-  } 50% {
-    transform: scale(1.0);
-    -webkit-transform: scale(1.0);
+.pac-item {
+  height: 40px !important;
+  padding-top: 5px;
+  cursor: pointer;
+}
+/* .gm-style-mtc {
+  width: 75px !important;
+}
+.gm-style-mtc div {
+  font-size: 12px !important;
+  padding: 7px !important;
+}
+.gm-style-mtc div div {
+  padding: 5px !important;
+} */
+.navbar .navbar-brand {
+  font-weight: bold;
+  font-size: 25px;
+}
+/* @media (max-width: 992px) {
+  .navbar .navbar-brand {
+    font-size: 16px;
   }
-}
+} */

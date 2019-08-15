@@ -14,268 +14,199 @@
     <link rel="icon" type="image/png" href="assets/img/android-chrome-192x192.png" sizes="192x192">
     <link rel="icon" type="image/png" href="assets/img/favicon-16x16.png" sizes="16x16">
     <link rel="icon" type="image/png" href="assets/img/favicon-32x32.png" sizes="32x32">
-    <link rel="stylesheet" href="assets/libs/uikit-3.0.0-rc.15/css/uikit.min.css"/>
+    <link rel="stylesheet" href="assets/vendor/bootstrap-4.3.1/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="assets/css/app.css"/>
   </head>
 
   <body>
-    <nav class="uk-navbar-container uk-light" uk-navbar>
-      <div class="uk-navbar-left">
-        <a class="uk-navbar-toggle" style="color: white;" href="#offcanvas" uk-toggle uk-navbar-toggle-icon ></a>
-        <span class="uk-navbar-item uk-logo" style="color: white;">Request Assistance</span>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <a class="navbar-brand" href="#">Request Assistance</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse flex-row-reverse" id="navbar">
+        <form class="my-2 my-lg-0 ml-auto">
+          <input class="form-control mr-sm-5" type="search" id="search" placeholder="Location Search" aria-label="Location Search">
+        </form>
+        <!-- <ul class="navbar-nav">
+          <li class="nav-item active">
+            <a class="nav-link" href="#" id="extent-btn" title="Zoom to Extent"><i class="fa fa-globe"></i> Zoom All</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="#download-modal" data-toggle="modal" id="download-btn"title="Download Data"><i class="fa fa-cloud-download-alt"></i> Download</a>
+          </li>
+          <li class="nav-item active dropdown mr-2">
+            <a class="nav-link dropdown-toggle" href="#" id="view-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-th-large"></i> View</a>
+            <div class="dropdown-menu" aria-labelledby="view-dropdown">
+              <a class="dropdown-item" href="#" name="view" id="split-view-btn">Split View</a>
+              <a class="dropdown-item" href="#" name="view" id="map-view-btn">Map View</a>
+              <a class="dropdown-item" href="#" name="view" id="table-view-btn">Table View</a>
+            </div>
+          </li>
+        </ul> -->
       </div>
     </nav>
 
-    <div id="offcanvas" uk-offcanvas>
-      <div class="uk-offcanvas-bar">
-        <button class="uk-offcanvas-close" type="button" uk-close></button>
-        If you require immediate emergency assistance, please dial 911.
-      </div>
-    </div>
-
-    <div class="map-container uk-box-shadow-small">
+    <div id="map-container">
       <div class="crosshair" id="crosshair"></div>
       <div id="map"></div>
     </div>
 
-    <div id="welcome-modal" class="uk-flex-top" uk-modal>
-      <div class="uk-modal-dialog uk-margin-auto-vertical">
-        <div class="uk-modal-body">
-          This is currently just a proof of concept. Do NOT use this for actual assistance!
-        </div>
-        <div class="uk-modal-footer uk-text-right">
-          <button class="uk-button uk-button-primary uk-modal-close" type="button">OK</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="loading-modal" class="uk-flex-top" uk-modal>
-      <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
-        <div uk-grid>
-          <div class="uk-width-3-4" style="padding-top: 8px;">
-            Submitting your request...
-          </div>
-          <div class="uk-width-1-4">
-            <div class="spinner">
-              <div class="double-bounce1"></div>
-              <div class="double-bounce2"></div>
+    <div id="form-container">
+      <form class="container-fluid pt-3" id="form">
+        <fieldset class="border p-2">
+          <legend class="w-auto">Location Info</legend>
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="latitude">Latitude</label>
+              <input type="text" class="form-control" name="latitude" required>
+            </div>
+            <div class="form-group col-6">
+              <label for="longitude">Longitude</label>
+              <input type="text" class="form-control" name="longitude" required>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="success-modal" class="uk-flex-top" uk-modal>
-      <div class="uk-modal-dialog uk-margin-auto-vertical">
-        <div class="uk-modal-body">
-          Your information has been successfully sent! A volunteer should contact you as soon as possible regarding assistance.
-        </div>
-        <div class="uk-modal-footer uk-text-right">
-          <button class="uk-button uk-button-primary uk-modal-close" type="button">OK</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="uk-padding-small uk-section-muted">
-      <form class="uk-grid-small uk-form-stacked" id="form" uk-grid>
-        <div class="uk-width-1-1">
-          <h3 class="uk-heading-line"><span>Location Info</span></h3>
-        </div>
-        <div class="uk-width-1-2">
-          <div class="uk-margin">
-            <label class="uk-form-label" for="latitude">Latitude</label>
-            <div class="uk-form-controls">
-              <input class="uk-input" name="latitude" type="text">
-            </div>
-          </div>
-        </div>
-        <div class="uk-width-1-2">
-          <div class="uk-margin">
-            <label class="uk-form-label" for="longitude">Longitude</label>
-            <div class="uk-form-controls">
-              <input class="uk-input" name="longitude" type="text">
-            </div>
-          </div>
-        </div>
-        <div class="uk-width-1-6">
-          <div class="uk-margin">
-            <label class="uk-form-label" for="apartment">Apt #</label>
-            <div class="uk-form-controls">
-              <input class="uk-input" name="apartment" type="text">
-            </div>
-          </div>
-        </div>
-        <div class="uk-width-5-6">
-          <div class="uk-margin">
-            <label class="uk-form-label" for="address">Street Address <span class="uk-text-danger">*</span></label>
-            <div class="uk-form-controls">
-              <div class="uk-inline uk-width-1-1">
-                <a class="uk-form-icon" href="" id="location-btn" uk-icon="icon: location"></a>
-                <input class="uk-input" name="address" type="text" placeholder="<- tap marker to autofill" required>
+          <div class="form-row">
+            <div class="form-group col-12">
+              <label for="address">Address</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <button class="btn btn-outline-dark" type="button" id="location-btn">Update</button>
+                </div>
+                <input type="text" class="form-control" name="address">
               </div>
             </div>
           </div>
-        </div>
-        <div class="uk-width-2-5">
-          <div class="uk-margin">
-            <label class="uk-form-label" for="city">City <span class="uk-text-danger">*</span></label>
-            <div class="uk-form-controls">
-              <input class="uk-input" name="city" type="text" required>
+          <div class="form-row">
+            <div class="form-group col-12">
+              <label for="location_comments">Location Comments</label>
+              <textarea class="form-control" name="location_comments" rows="4" placeholder="on roof, street flooded, etc."></textarea>
             </div>
           </div>
-        </div>
-        <div class="uk-width-1-5">
-          <div class="uk-margin">
-            <label class="uk-form-label" for="state">State</label>
-            <div class="uk-form-controls">
-              <input class="uk-input" name="state" type="text">
+        </fieldset>
+        <fieldset class="border p-2">
+          <legend class="w-auto">Contact Info</legend>
+          <div class="form-row">
+            <div class="form-group col-12">
+              <label for="name">Name(s)</label>
+              <input type="text" class="form-control" name="name" required>
             </div>
           </div>
-        </div>
-        <div class="uk-width-2-5">
-          <div class="uk-margin">
-            <label class="uk-form-label" for="zip">Zip Code</label>
-            <div class="uk-form-controls">
-              <input class="uk-input" name="zip" type="text" pattern="(\d{5}([\-]\d{4})?)">
+          <div class="form-row">
+            <div class="form-group col-6">
+              <label for="email">Email</label>
+              <input type="text" class="form-control" name="email">
+            </div>
+            <div class="form-group col-6">
+              <label for="phone">Phone</label>
+              <input type="text" class="form-control" name="phone" required>
             </div>
           </div>
-        </div>
-        <div class="uk-width-1-1">
-          <div class="uk-margin">
-            <label class="uk-form-label" for="county">County</label>
-            <div class="uk-form-controls">
-              <input class="uk-input" name="county" type="text">
+        </fieldset>
+        <fieldset class="border p-2">
+          <legend class="w-auto">Assistance Required</legend>
+          <div class="form-row">
+            <div class="form-group col-4">
+              <label for="people">People</label>
+              <input type="number" class="form-control" name="people" min="0" step="1">
+            </div>
+            <div class="form-group col-4">
+              <label for="pets">Pets</label>
+              <input type="number" class="form-control" name="pets" min="0" step="1">
+            </div>
+            <div class="form-group col-4">
+              <label for="pet_types">Pet Type</label>
+              <select class="form-control" name="pet_types" multiple>
+                  <option>Cats</option>
+                  <option>Dogs</option>
+                  <option>Rodents</option>
+                  <option>Reptiles</option>
+                  <option>Birds</option>
+                  <option>Other</option>
+                </select>
             </div>
           </div>
-        </div>
-        <div class="uk-width-1-1">
-          <div class="uk-margin">
-            <label class="uk-form-label" for="location_comments">Location Comments</label>
-            <div class="uk-form-controls">
-              <textarea class="uk-textarea" rows="4" name="location_comments" placeholder="on roof, street flooded, etc."></textarea>
+          <div class="form-row">
+            <div class="form-group col-12">
+              <label for="special_considerations">Special Considerations</label>
+              <textarea class="form-control" name="special_considerations" rows="4" placeholder="medical needs, mobility, age, etc."></textarea>
             </div>
           </div>
-        </div>
-        <div class="uk-width-1-1">
-          <h3 class="uk-heading-line"><span>Contact Info</span></h3>
-        </div>
-        <div class="uk-width-1-1">
-          <div class="uk-margin">
-            <label class="uk-form-label" for="name">Name(s) <span class="uk-text-danger">*</span></label>
-            <div class="uk-form-controls">
-              <input class="uk-input" name="name" type="text" required>
+          <div class="form-row">
+            <div class="form-group col-12">
+              <label for="other_comments">Other Comments</label>
+              <textarea class="form-control" name="other_comments" rows="4" placeholder="additional information to help responders"></textarea>
             </div>
           </div>
-        </div>
-        <div class="uk-width-3-5">
-          <div class="uk-margin">
-            <label class="uk-form-label" for="email">Email</label>
-            <div class="uk-form-controls">
-              <input class="uk-input" name="email" type="email">
-            </div>
-          </div>
-        </div>
-        <div class="uk-width-2-5">
-          <div class="uk-margin">
-            <label class="uk-form-label" for="longitude">Phone <span class="uk-text-danger">*</span></label>
-            <div class="uk-form-controls">
-              <input class="uk-input" name="phone" type="text" required>
-            </div>
-          </div>
-        </div>
-        <div class="uk-width-2-5">
-          <div class="uk-margin">
-            <label class="uk-form-label" for="twitter">Twitter Handle</label>
-            <div class="uk-form-controls">
-              <input class="uk-input" name="twitter" type="text" placeholder="@">
-            </div>
-          </div>
-        </div>
-        <div class="uk-width-3-5">
-          <div class="uk-margin">
-            <label class="uk-form-label" for="facebook">Facebook Post</label>
-            <div class="uk-form-controls">
-              <input class="uk-input" name="facebook" type="text">
-            </div>
-          </div>
-        </div>
-        <div class="uk-width-1-1">
-          <h3 class="uk-heading-line"><span>Assistance Required</span></h3>
-        </div>
-        <div class="uk-width-1-5">
-          <div class="uk-margin">
-            <label class="uk-form-label" for="people">People</label>
-            <div class="uk-form-controls">
-              <input class="uk-input" name="people" type="number">
-            </div>
-          </div>
-        </div>
-        <div class="uk-width-1-5">
-          <div class="uk-margin">
-            <label class="uk-form-label" for="pets">Pets</label>
-            <div class="uk-form-controls">
-              <input class="uk-input" name="pets" type="number">
-            </div>
-          </div>
-        </div>
-        <div class="uk-width-3-5">
-          <div class="uk-margin">
-            <label class="uk-form-label" for="pet_types">Type of Pets</label>
-            <div class="uk-form-controls">
-              <select class="uk-select" name="pet_types" multiple>
-                <option>Cats</option>
-                <option>Dogs</option>
-                <option>Rodents</option>
-                <option>Reptiles</option>
-                <option>Birds</option>
-                <option>Other</option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <div class="uk-width-1-1">
-          <div class="uk-margin">
-            <label class="uk-form-label" for="special_considerations">Special Considerations</label>
-            <div class="uk-form-controls">
-              <textarea class="uk-textarea" rows="4" name="special_considerations" placeholder="medical needs, mobility, age, etc."></textarea>
-            </div>
-          </div>
-        </div>
-        <div class="uk-width-1-1">
-          <div class="uk-margin">
-            <label class="uk-form-label" for="other_comments">Other Comments</label>
-            <div class="uk-form-controls">
-              <textarea class="uk-textarea" rows="4" name="other_comments" placeholder="additional information to help responders"></textarea>
-            </div>
-          </div>
-        </div>
-        <div class="uk-width-1-1">
-          <div class="uk-margin">
-            <label class="uk-form-label" for="photo">Photo</label>
-            <div class="uk-form-controls">
+          <div class="form-row d-none">
+            <div class="form-group col-12">
+              <label for="photo">Photo</label>
               <input type="file" id="file" accept="image/*">
               <input type="hidden" name="photo">
             </div>
           </div>
-          <img id="photo-preview" width="100%" style="padding-top: 5px; display: none;">
+        </fieldset>
+        <img id="photo-preview" width="100%" class="pt-4" style="display: none;">
+        <!-- <button type="button" id="photo-btn" class="btn btn-secondary btn-lg btn-block my-4">Attach Photo</button> -->
+        <div class="btn-group btn-block btn-lg mt-3" role="group">
+          <button type="button" id="attach-photo-btn" class="btn btn-secondary">Attach Photo</button>
+          <button type="button" id="remove-photo-btn" class="btn btn-warning">Remove Photo</button>
         </div>
-        <div class="uk-width-1-1">
-          <div class="uk-text-meta">
-            By submitting this form you acknowledge that you are providing information to a volunteer group. Your information will be searchable by the public. This is a crowd-sourced effort to help get your information to people that can provide assistance.
-          </div>
-        </div>
-        <div class="uk-width-1-1">
-          <div class="uk-padding-small">
-            <button class="uk-button uk-button-primary uk-width-1-1" type="submit">Submit Request</button>
-          </div>
-        </div>
+        <button type="submit" class="btn btn-primary btn-lg btn-block my-3">
+          <!-- <span class="spinner-grow" style="width: 1.5rem; height: 1.5rem;" role="status"></span> -->
+          Submit Request
+        </button>
       </form>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="assets/libs/uikit-3.0.0-rc.15/js/uikit.min.js"></script>
-    <script src="assets/libs/uikit-3.0.0-rc.15/js/uikit-icons.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-load-image/2.10.0/load-image.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.33&key=AIzaSyCZFBnhpFAvqY4TMeV-4jXpHrbaEUv4zT0"></script>
+
+    <div class="modal" id="uploading-modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <!-- <div class="modal-header">
+            <h5 class="modal-title">Uploading...</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div> -->
+          <div class="modal-body">
+            <p>
+              <div class="d-flex align-items-center">
+                <h3>Uploading...</h3>
+                <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+              </div>
+            </p>
+          </div>
+          <!-- <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div> -->
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="success-modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Success!</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>
+              Thanks! Your information has been successfully uploaded.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="assets/vendor/jquery-3.4.1.min.js"></script>
+    <script src="assets/vendor/popper-1.15.0/popper.min.js"></script>
+    <script src="assets/vendor/bootstrap-4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyCZFBnhpFAvqY4TMeV-4jXpHrbaEUv4zT0"></script>
     <script src="assets/js/app.js"></script>
   </body>
 </html>

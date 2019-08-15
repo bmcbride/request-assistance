@@ -4,16 +4,72 @@ var app = {
   }
 };
 
+app.bounds = new google.maps.LatLngBounds()
+
+app.infoWindow = new google.maps.InfoWindow({
+  disableAutoPan: true
+});
+
+app.autocomplete = new google.maps.places.Autocomplete((document.getElementById("search")), {
+  types: ["geocode"]
+});
+
+app.autocomplete.addListener("place_changed", function() {
+  var place = this.getPlace();
+  if (place) {
+    placeChanged(place);
+  }
+});
+
+function placeChanged (place) {
+  if (place && place.geometry) {
+    app.map.setCenter(place.geometry.location);
+    app.map.setZoom(18);
+    if (place.geometry.viewport) {
+      app.map.fitBounds(place.geometry.viewport);
+    }
+    app.infoWindow.setPosition(place.geometry.location);
+    app.infoWindow.setContent(place.formatted_address);
+    app.infoWindow.open(app.map);
+  }
+  $(".navbar-collapse").collapse("hide");
+};
+
+$(".navbar-collapse").on("hidden.bs.collapse", function () {
+  $("body").css("padding-top", $(".navbar").css("height"));
+  google.maps.event.trigger(app.map, "resize");
+});
+
 app.map = new google.maps.Map($("#map")[0], {
+  styles: [{
+    featureType: "poi",
+    stylers: [{visibility: "off"}]
+  }, {
+    featureType: "transit",
+    elementType: "labels.icon",
+    stylers: [{visibility: "off"}]
+  }],
   fullscreenControl: false,
   streetViewControl: false,
+  zoomControl: false,
+  mapTypeControl: true,
+  mapTypeControlOptions: {
+    // style: google.maps.MapTypeControlStyle.DROPDOWN_MENU,
+    mapTypeIds: [
+      google.maps.MapTypeId.ROADMAP,
+      google.maps.MapTypeId.SATELLITE
+    ]
+  },
   gestureHandling: "greedy",
+  controlSize: 28,
   zoom: 0,
   center: {
     lat: 0,
     lng: 0
   }
 });
+
+app.autocomplete.bindTo("bounds", app.map);
 
 app.locationMarker =new google.maps.Marker({
   map: app.map,
@@ -43,14 +99,14 @@ app.locationCircle = new google.maps.Circle({
 
 app.geolocationBtn = document.createElement("div");
 app.geolocationBtn.id = "geolocationBtn";
-app.geolocationBtn.style.cssText = "background-color:#fff;border:2px solid #fff;border-radius 3px;box-shadow:rgba(0,0,0,0.298039) 0 1px 4px -1px;margin-right:10px;cursor:pointer;border-radius:2px;padding:3px;";
+app.geolocationBtn.style.cssText = "background-color:#fff;border:2px solid #fff;border-radius 3px;box-shadow:rgba(0,0,0,0.298039) 0 1px 4px -1px;margin:7px;cursor:pointer;border-radius:2px;padding:3px;";
 app.geolocationBtn.index = 1;
 app.geolocationIcon = document.createElement("div");
 app.geolocationIcon.id = "geolocationIcon";
 app.geolocationIcon.style.cssText = "background-size:36px 18px;width:18px;height:18px;opacity:0.9;background-image:url(assets/img/geolocation.png);";
 app.geolocationBtn.appendChild(app.geolocationIcon);
 
-app.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(app.geolocationBtn);
+app.map.controls[google.maps.ControlPosition.RIGHT_TOP].push(app.geolocationBtn);
 
 google.maps.event.addDomListener(app.map, "center_changed", function() {
   $("input[name=latitude]").val(app.map.getCenter().lat().toFixed(6));
@@ -143,14 +199,14 @@ function serializeForm() {
 }
 
 $("#form").submit(function(e) {
-  UIkit.modal($("#loading-modal")).show();
+  $("#uploading-modal").modal("show");
   $.ajax({
     type: "POST",
     url: app.config.url,
     data: serializeForm(),
     success: function() {
-      UIkit.notification.closeAll();
-      UIkit.modal($("#success-modal")).show();
+      $("#uploading-modal").modal("hide");
+      $("#success-modal").modal("show");
       $("#form")[0].reset();
       $("#photo-preview").attr("src", "");
       $("#photo-preview").hide();
@@ -160,23 +216,34 @@ $("#form").submit(function(e) {
 });
 
 $("#file").change(function(e) {
-  if (e.target.files.length > 0) {
-    loadImage(
-      e.target.files[0],
-      function (img) {
-        $("input[name=photo]").val(img.toDataURL("image/jpeg").replace(/^(.+,)/, ""));
-        $("#photo-preview").attr("src", img.toDataURL("image/jpeg"));
-        $("#photo-preview").show();
-      }, {
-        maxWidth: 1024,
-        maxHeight: 1024,
-        canvas: true
-      }
-    );
-  } else {
-    $("#photo-preview").attr("src", "");
-    $("#photo-preview").hide();
+  if (e.target.files && e.target.files[0]) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      $("input[name=photo]").val(e.target.result.replace(/^(.+,)/, ""));
+      $("#photo-preview").attr("src", e.target.result);
+      $("#photo-preview").show();
+    };
+    reader.readAsDataURL(e.target.files[0]);
+  }  else {
+    removePhoto();
   }
+});
+
+function removePhoto() {
+  $("#photo-preview").attr("src", "");
+  $("#photo-preview").hide();
+  $("#file").val("");
+  $("input[name=photo]").val("");
+}
+
+$("#attach-photo-btn").click(function() {
+  $("#file").trigger("click");
+  return false;
+});
+
+$("#remove-photo-btn").click(function() {
+  removePhoto();
+  return false;
 });
 
 $("#location-btn").click(function() {
@@ -184,16 +251,19 @@ $("#location-btn").click(function() {
   return false;
 });
 
+$(window).resize(function () {
+  $("body").css("padding-top", $(".navbar").css("height"));
+});
+
 $(document).ready(function() {
-  UIkit.modal($("#welcome-modal")).show();
+  // UIkit.modal($("#welcome-modal")).show();
+  $("body").css("padding-top", $(".navbar").css("height"));
 
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position){
+      reverseGeocode(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
       locationUpdate(position);
       app.map.fitBounds(app.locationCircle.getBounds());
-      reverseGeocode(app.map.getCenter());
-      $("input[name=latitude]").val(position.coords.latitude.toFixed(6));
-      $("input[name=longitude]").val(position.coords.longitude.toFixed(6));
       navigator.geolocation.watchPosition(locationUpdate, geolocationError, {enableHighAccuracy: true});
     }, geolocationError, {enableHighAccuracy: true});
   } else {
