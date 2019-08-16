@@ -217,13 +217,53 @@ $("#form").submit(function(e) {
 
 $("#file").change(function(e) {
   if (e.target.files && e.target.files[0]) {
-    var reader = new FileReader();
-    reader.onload = function (e) {
-      $("input[name=photo]").val(e.target.result.replace(/^(.+,)/, ""));
-      $("#photo-preview").attr("src", e.target.result);
-      $("#photo-preview").show();
-    };
-    reader.readAsDataURL(e.target.files[0]);
+    // var reader = new FileReader();
+    // reader.onload = function (e) {
+    //   $("input[name=photo]").val(e.target.result.replace(/^(.+,)/, ""));
+    //   $("#photo-preview").attr("src", e.target.result);
+    //   $("#photo-preview").show();
+    // };
+    // reader.readAsDataURL(e.target.files[0]);
+    loadImage(
+      e.target.files[0],
+      function (img) {
+        img.toBlob(function(resizedImageBlob) {
+          loadImage.parseMetaData(
+            e.target.files[0],
+            function(data) {
+              if (!data.imageHead) {
+                return;
+              }
+              // Combine data.imageHead with the image body of a resized file to create scaled images with the original image meta data, e.g.:
+              var blob = new Blob(
+                [
+                  data.imageHead,
+                  // Resized images always have a head size of 20 bytes, including the JPEG marker and a minimal JFIF header:
+                  loadImage.blobSlice.call(resizedImageBlob, 20)
+                ],
+                {type: resizedImageBlob.type}
+              );
+              var reader = new FileReader();
+              reader.onload = function (e) {
+                $("input[name=photo]").val(e.target.result.replace(/^(.+,)/, ""));
+                $("#photo-preview").attr("src", e.target.result);
+                $("#photo-preview").show();
+              };
+              reader.readAsDataURL(blob);
+            },
+            {
+              maxMetaDataSize: 262144,
+              disableImageHead: false
+            }
+          );
+        }, "image/jpeg");
+      }, {
+        maxWidth: 1024,
+        maxHeight: 1024,
+        meta: true,
+        canvas: true
+      }
+    );
   }  else {
     removePhoto();
   }
